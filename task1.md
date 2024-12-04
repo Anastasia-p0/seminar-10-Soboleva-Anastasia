@@ -26,9 +26,12 @@
    ```
    
    *Результат:*
-   [Вставьте результат выполнения]
+   ```sql
+   CREATE INDEX
+   Query returned successfully in 716 msec.
+   ```
 
-4. Проверьте информацию о созданных индексах:
+5. Проверьте информацию о созданных индексах:
    ```sql
    SELECT schemaname, tablename, indexname, indexdef
    FROM pg_catalog.pg_indexes
@@ -36,12 +39,29 @@
    ```
    
    *Результат:*
-   [Вставьте результат запроса]
+   ```sql
+   "neganov"	"t_books"	"t_books_rev_title_idx"	"CREATE INDEX t_books_rev_title_idx ON neganov.t_books USING btree (reverse((title)::text))"
+"udovichenko"	"t_books"	"title_category_index"	"CREATE INDEX title_category_index ON udovichenko.t_books USING btree (title, category)"
+"udovichenko"	"t_books"	"category_author_index"	"CREATE INDEX category_author_index ON udovichenko.t_books USING btree (category, author)"
+"udovichenko"	"t_books"	"author_bookid_index"	"CREATE INDEX author_bookid_index ON udovichenko.t_books USING btree (author, book_id)"
+"udovichenko"	"t_books"	"t_books_up_title_idx"	"CREATE INDEX t_books_up_title_idx ON udovichenko.t_books USING btree (upper((title)::text))"
+"udovichenko"	"t_books"	"t_books_rev_title_idx"	"CREATE INDEX t_books_rev_title_idx ON udovichenko.t_books USING btree (reverse((title)::text))"
+"udovichenko"	"t_books"	"t_books_desc_idx"	"CREATE INDEX t_books_desc_idx ON udovichenko.t_books USING btree (title DESC)"
+"udovichenko"	"t_books"	"t_books_title_idx"	"CREATE INDEX t_books_title_idx ON udovichenko.t_books USING btree (title)"
+"plyushch"	"t_books"	"idx_author_title"	"CREATE INDEX idx_author_title ON plyushch.t_books USING btree (author, title)"
+"udovichenko"	"t_books"	"t_books_active_idx"	"CREATE INDEX t_books_active_idx ON udovichenko.t_books USING btree (is_active)"
+"udovichenko"	"t_books"	"t_books_author_title_index"	"CREATE INDEX t_books_author_title_index ON udovichenko.t_books USING btree (author, title)"
+"public"	"t_books"	"t_books_id_pk"	"CREATE UNIQUE INDEX t_books_id_pk ON public.t_books USING btree (book_id)"
+"public"	"t_books"	"t_books_brin_cat_idx"	"CREATE INDEX t_books_brin_cat_idx ON public.t_books USING brin (category)"
+"soboleva"	"t_books"	"t_books_title_idx"	"CREATE INDEX t_books_title_idx ON soboleva.t_books USING btree (title)"
+"soboleva"	"t_books"	"t_books_active_idx"	"CREATE INDEX t_books_active_idx ON soboleva.t_books USING btree (is_active)"
+"public"	"t_books"	"t_books_brin_author_idx"	"CREATE INDEX t_books_brin_author_idx ON public.t_books USING brin (author)"
+   ```
    
    *Объясните результат:*
    [Ваше объяснение]
 
-5. Обновите статистику таблицы:
+6. Обновите статистику таблицы:
    ```sql
    ANALYZE t_books;
    ```
@@ -49,7 +69,7 @@
    *Результат:*
    [Вставьте результат выполнения]
 
-6. Выполните запрос для поиска книги 'Oracle Core' и получите план выполнения:
+7. Выполните запрос для поиска книги 'Oracle Core' и получите план выполнения:
    ```sql
    EXPLAIN ANALYZE
    SELECT * FROM t_books WHERE title = 'Oracle Core';
@@ -61,7 +81,7 @@
    *Объясните результат:*
    [Ваше объяснение]
 
-7. Выполните запрос для поиска книги по book_id и получите план выполнения:
+8. Выполните запрос для поиска книги по book_id и получите план выполнения:
    ```sql
    EXPLAIN ANALYZE
    SELECT * FROM t_books WHERE book_id = 18;
@@ -73,7 +93,7 @@
    *Объясните результат:*
    [Ваше объяснение]
 
-8. Выполните запрос для поиска активных книг и получите план выполнения:
+9. Выполните запрос для поиска активных книг и получите план выполнения:
    ```sql
    EXPLAIN ANALYZE
    SELECT * FROM t_books WHERE is_active = true;
@@ -85,7 +105,7 @@
    *Объясните результат:*
    [Ваше объяснение]
 
-9. Посчитайте количество строк и уникальных значений:
+10. Посчитайте количество строк и уникальных значений:
    ```sql
    SELECT 
        COUNT(*) as total_rows,
@@ -98,7 +118,7 @@
    *Результат:*
    [Вставьте результат запроса]
 
-10. Удалите созданные индексы:
+11. Удалите созданные индексы:
     ```sql
     DROP INDEX t_books_title_idx;
     DROP INDEX t_books_active_idx;
@@ -107,7 +127,7 @@
     *Результат:*
     [Вставьте результат выполнения]
 
-11. Основываясь на предыдущих результатах, создайте индексы для оптимизации следующих запросов:
+12. Основываясь на предыдущих результатах, создайте индексы для оптимизации следующих запросов:
     a. `WHERE title = $1 AND category = $2`
     b. `WHERE title = $1`
     c. `WHERE category = $1 AND author = $2`
@@ -119,7 +139,7 @@
     *Объясните ваше решение:*
     [Ваше объяснение]
 
-12. Протестируйте созданные индексы.
+13. Протестируйте созданные индексы.
     
     *Результаты тестов:*
     [Вставьте планы выполнения для каждого случая]
@@ -127,7 +147,7 @@
     *Объясните результаты:*
     [Ваше объяснение]
 
-13. Выполните регистронезависимый поиск по началу названия:
+14. Выполните регистронезависимый поиск по началу названия:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title ILIKE 'Relational%';
@@ -139,7 +159,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-14. Создайте функциональный индекс:
+15. Создайте функциональный индекс:
     ```sql
     CREATE INDEX t_books_up_title_idx ON t_books(UPPER(title));
     ```
@@ -147,7 +167,7 @@
     *Результат:*
     [Вставьте результат выполнения]
 
-15. Выполните запрос из шага 13 с использованием UPPER:
+16. Выполните запрос из шага 13 с использованием UPPER:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE UPPER(title) LIKE 'RELATIONAL%';
@@ -159,7 +179,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-16. Выполните поиск подстроки:
+17. Выполните поиск подстроки:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title ILIKE '%Core%';
@@ -171,7 +191,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-17. Попробуйте удалить все индексы:
+18. Попробуйте удалить все индексы:
     ```sql
     DO $$ 
     DECLARE
@@ -192,7 +212,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-18. Создайте индекс для оптимизации суффиксного поиска:
+19. Создайте индекс для оптимизации суффиксного поиска:
     ```sql
     -- Вариант 1: с reverse()
     CREATE INDEX t_books_rev_title_idx ON t_books(reverse(title));
@@ -208,7 +228,7 @@
     *Объясните результаты:*
     [Ваше объяснение]
 
-19. Выполните поиск по точному совпадению:
+20. Выполните поиск по точному совпадению:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title = 'Oracle Core';
@@ -220,7 +240,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-20. Выполните поиск по началу названия:
+21. Выполните поиск по началу названия:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title ILIKE 'Relational%';
@@ -232,7 +252,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-21. Создайте свой пример индекса с обратной сортировкой:
+22. Создайте свой пример индекса с обратной сортировкой:
     ```sql
     CREATE INDEX t_books_desc_idx ON t_books(title DESC);
     ```

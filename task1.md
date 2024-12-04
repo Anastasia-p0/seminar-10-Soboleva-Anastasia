@@ -240,7 +240,7 @@
     *Тестовый запрос:*
     ```sql
     SELECT * FROM t_books
-   ORDER BY title DESC;
+    ORDER BY title DESC;
    ```
     
     *План выполнения:*

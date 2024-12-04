@@ -40,8 +40,8 @@
    
    *Результат:*
    ```sql
-"soboleva"	"t_books"	"t_books_title_idx"	"CREATE INDEX t_books_title_idx ON soboleva.t_books USING btree (title)"
-"soboleva"	"t_books"	"t_books_active_idx"	"CREATE INDEX t_books_active_idx ON soboleva.t_books USING btree (is_active)"
+   "soboleva"	"t_books"	"t_books_title_idx"	"CREATE INDEX t_books_title_idx ON soboleva.t_books USING btree (title)"
+   "soboleva"	"t_books"	"t_books_active_idx"	"CREATE INDEX t_books_active_idx ON soboleva.t_books USING btree (is_active)"
    ```
    
    *Объясните результат:*

@@ -9,7 +9,11 @@
    ```
    
    *План выполнения:*
-   [Вставьте план выполнения]
+"Seq Scan on t_books  (cost=0.00..3155.00 rows=1 width=33) (actual time=15.170..15.204 rows=1 loops=1)"
+"  Filter: ((title)::text = 'Oracle Core'::text)"
+"  Rows Removed by Filter: 149999"
+"Planning Time: 0.080 ms"
+"Execution Time: 15.225 ms"
    
    *Объясните результат:*
    [Ваше объяснение]

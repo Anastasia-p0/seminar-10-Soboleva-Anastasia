@@ -145,12 +145,26 @@
     d. `WHERE author = $1 AND book_id = $2`
     
     *Созданные индексы:*
-    [Вставьте команды создания индексов]
+    ```sql
+    a. CREATE INDEX t_books_title_idx ON t_books(title);
+    CREATE INDEX t_books_category_idx ON t_books(category);
+    ```
+    ```sql
+    b. CREATE INDEX t_books_title_idx ON t_books(title);
+    ```
+    ```sql
+    c. CREATE INDEX t_books_category_idx ON t_books(category);
+    CREATE INDEX t_books_author_idx ON t_books(author);
+    ```
+    ```sql
+    d. CREATE INDEX t_books_author_idx ON t_books(author);
+    CREATE INDEX t_books_book_id_idx ON t_books(book_id);
+    ```
     
     *Объясните ваше решение:*
     [Ваше объяснение]
 
-14. Протестируйте созданные индексы.
+15. Протестируйте созданные индексы.
     
     *Результаты тестов:*
     [Вставьте планы выполнения для каждого случая]
@@ -158,7 +172,7 @@
     *Объясните результаты:*
     [Ваше объяснение]
 
-15. Выполните регистронезависимый поиск по началу названия:
+16. Выполните регистронезависимый поиск по началу названия:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title ILIKE 'Relational%';
@@ -170,7 +184,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-16. Создайте функциональный индекс:
+17. Создайте функциональный индекс:
     ```sql
     CREATE INDEX t_books_up_title_idx ON t_books(UPPER(title));
     ```
@@ -178,7 +192,7 @@
     *Результат:*
     [Вставьте результат выполнения]
 
-17. Выполните запрос из шага 13 с использованием UPPER:
+18. Выполните запрос из шага 13 с использованием UPPER:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE UPPER(title) LIKE 'RELATIONAL%';
@@ -190,7 +204,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-18. Выполните поиск подстроки:
+19. Выполните поиск подстроки:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title ILIKE '%Core%';
@@ -202,7 +216,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-19. Попробуйте удалить все индексы:
+20. Попробуйте удалить все индексы:
     ```sql
     DO $$ 
     DECLARE
@@ -223,7 +237,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-20. Создайте индекс для оптимизации суффиксного поиска:
+21. Создайте индекс для оптимизации суффиксного поиска:
     ```sql
     -- Вариант 1: с reverse()
     CREATE INDEX t_books_rev_title_idx ON t_books(reverse(title));
@@ -239,7 +253,7 @@
     *Объясните результаты:*
     [Ваше объяснение]
 
-21. Выполните поиск по точному совпадению:
+22. Выполните поиск по точному совпадению:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title = 'Oracle Core';
@@ -251,7 +265,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-22. Выполните поиск по началу названия:
+23. Выполните поиск по началу названия:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books WHERE title ILIKE 'Relational%';
@@ -263,7 +277,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-23. Создайте свой пример индекса с обратной сортировкой:
+24. Создайте свой пример индекса с обратной сортировкой:
     ```sql
     CREATE INDEX t_books_desc_idx ON t_books(title DESC);
     ```

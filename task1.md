@@ -40,22 +40,8 @@
    
    *Результат:*
    ```sql
-   "neganov"	"t_books"	"t_books_rev_title_idx"	"CREATE INDEX t_books_rev_title_idx ON neganov.t_books USING btree (reverse((title)::text))"
-"udovichenko"	"t_books"	"title_category_index"	"CREATE INDEX title_category_index ON udovichenko.t_books USING btree (title, category)"
-"udovichenko"	"t_books"	"category_author_index"	"CREATE INDEX category_author_index ON udovichenko.t_books USING btree (category, author)"
-"udovichenko"	"t_books"	"author_bookid_index"	"CREATE INDEX author_bookid_index ON udovichenko.t_books USING btree (author, book_id)"
-"udovichenko"	"t_books"	"t_books_up_title_idx"	"CREATE INDEX t_books_up_title_idx ON udovichenko.t_books USING btree (upper((title)::text))"
-"udovichenko"	"t_books"	"t_books_rev_title_idx"	"CREATE INDEX t_books_rev_title_idx ON udovichenko.t_books USING btree (reverse((title)::text))"
-"udovichenko"	"t_books"	"t_books_desc_idx"	"CREATE INDEX t_books_desc_idx ON udovichenko.t_books USING btree (title DESC)"
-"udovichenko"	"t_books"	"t_books_title_idx"	"CREATE INDEX t_books_title_idx ON udovichenko.t_books USING btree (title)"
-"plyushch"	"t_books"	"idx_author_title"	"CREATE INDEX idx_author_title ON plyushch.t_books USING btree (author, title)"
-"udovichenko"	"t_books"	"t_books_active_idx"	"CREATE INDEX t_books_active_idx ON udovichenko.t_books USING btree (is_active)"
-"udovichenko"	"t_books"	"t_books_author_title_index"	"CREATE INDEX t_books_author_title_index ON udovichenko.t_books USING btree (author, title)"
-"public"	"t_books"	"t_books_id_pk"	"CREATE UNIQUE INDEX t_books_id_pk ON public.t_books USING btree (book_id)"
-"public"	"t_books"	"t_books_brin_cat_idx"	"CREATE INDEX t_books_brin_cat_idx ON public.t_books USING brin (category)"
 "soboleva"	"t_books"	"t_books_title_idx"	"CREATE INDEX t_books_title_idx ON soboleva.t_books USING btree (title)"
 "soboleva"	"t_books"	"t_books_active_idx"	"CREATE INDEX t_books_active_idx ON soboleva.t_books USING btree (is_active)"
-"public"	"t_books"	"t_books_brin_author_idx"	"CREATE INDEX t_books_brin_author_idx ON public.t_books USING brin (author)"
    ```
    
    *Объясните результат:*

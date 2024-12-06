@@ -178,6 +178,16 @@
     ```
     ```sql
     b.
+    "Index Scan using t_books_title_idx on t_books  (cost=0.42..8.44 rows=1 width=33) (actual time=0.045..0.047 rows=1 loops=1)"
+    "  Index Cond: ((title)::text = 'Oracle Core'::text)"
+    "Planning Time: 0.134 ms"
+    "Execution Time: 0.073 ms"
+    ```
+    ```sql
+    c.
+    ```
+    ```sql
+    d.
     ```
     
     *Объясните результаты:*

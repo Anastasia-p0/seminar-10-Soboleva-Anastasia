@@ -185,9 +185,21 @@
     ```
     ```sql
     c.
+    "Index Scan using t_books_title_idx on t_books  (cost=0.42..8.44 rows=1 width=33) (actual time=0.063..0.064 rows=0 loops=1)"
+    "  Index Cond: ((title)::text = 'Oracle Core'::text)"
+    "  Filter: ((author)::text = 'Author_748'::text)"
+    "  Rows Removed by Filter: 1"
+    "Planning Time: 0.199 ms"
+    "Execution Time: 0.088 ms"
     ```
     ```sql
     d.
+    "Index Scan using t_books_book_id_idx on t_books  (cost=0.42..8.44 rows=1 width=33) (actual time=0.150..0.150 rows=0 loops=1)"
+    "  Index Cond: (book_id = 1000)"
+    "  Filter: ((author)::text = 'Author_748'::text)"
+    "  Rows Removed by Filter: 1"
+    "Planning Time: 0.177 ms"
+    "Execution Time: 0.191 ms"
     ```
     
     *Объясните результаты:*

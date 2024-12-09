@@ -305,7 +305,7 @@
     ```
     
     *Результаты тестов:*
-    ``sql
+    ```sql
     Первый вариант:
     "Seq Scan on t_books  (cost=0.00..3155.00 rows=15 width=33) (actual time=153.020..153.102 rows=1 loops=1)"
     "  Filter: ((title)::text ~~* '%Core%'::text)"
@@ -313,7 +313,7 @@
     "Planning Time: 0.642 ms"
     "Execution Time: 153.127 ms"
     ```
-    ``sql
+    ```sql
     Второй вариант:
     ```
     

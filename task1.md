@@ -185,12 +185,15 @@
     ```
     ```sql
     c.
-    "Index Scan using t_books_title_idx on t_books  (cost=0.42..8.44 rows=1 width=33) (actual time=0.063..0.064 rows=0 loops=1)"
-    "  Index Cond: ((title)::text = 'Oracle Core'::text)"
-    "  Filter: ((author)::text = 'Author_748'::text)"
-    "  Rows Removed by Filter: 1"
-    "Planning Time: 0.199 ms"
-    "Execution Time: 0.088 ms"
+    "Bitmap Heap Scan on t_books  (cost=5.41..428.73 rows=29 width=33) (actual time=0.069..0.296 rows=26 loops=1)"
+    "  Recheck Cond: ((author)::text = 'Author_748'::text)"
+    "  Filter: ((category)::text = 'History'::text)"
+    "  Rows Removed by Filter: 106"
+    "  Heap Blocks: exact=125"
+    "  ->  Bitmap Index Scan on t_books_author_idx  (cost=0.00..5.40 rows=148 width=0) (actual time=0.035..0.036 rows=132 loops=1)"
+    "        Index Cond: ((author)::text = 'Author_748'::text)"
+    "Planning Time: 0.160 ms"
+    "Execution Time: 0.335 ms"
     ```
     ```sql
     d.
@@ -203,7 +206,7 @@
     ```
     
     *Объясните результаты:*
-    [Ваше объяснение]
+    Использование индексов ускорило запросы, однако индекс на category можно было не вводить, так как он нигде не используется из-за того, что очень маленькая дифференциация принимаемых значений
 
 17. Выполните регистронезависимый поиск по началу названия:
     ```sql

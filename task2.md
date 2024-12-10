@@ -38,21 +38,30 @@
    ```
    
    *Результат:*
-   [Вставьте результат выполнения]
+   ```sql
+   ANALYZE
+   Query returned successfully in 1 secs 538 msec.
+   ```
 
-4. Выполните запрос для поиска книги с id = 18:
+5. Выполните запрос для поиска книги с id = 18:
    ```sql
    EXPLAIN ANALYZE
    SELECT * FROM t_books_part WHERE book_id = 18;
    ```
    
    *План выполнения:*
-   [Вставьте план выполнения]
+   ```sql
+   "Seq Scan on t_books_part_1 t_books_part  (cost=0.00..1032.99 rows=1 width=32) (actual time=0.016..4.997 rows=1 loops=1)"
+   "  Filter: (book_id = 18)"
+   "  Rows Removed by Filter: 49998"
+   "Planning Time: 0.118 ms"
+   "Execution Time: 5.018 ms"
+   ```
    
    *Объясните результат:*
-   [Ваше объяснение]
+   Скорость выполнения запроса выше, чем без партиционирования, так как поиск выполняется не по всей таблице, а только в одной её части
 
-5. Выполните поиск по названию книги:
+6. Выполните поиск по названию книги:
    ```sql
    EXPLAIN ANALYZE
    SELECT * FROM t_books_part 
@@ -60,20 +69,36 @@
    ```
    
    *План выполнения:*
-   [Вставьте план выполнения]
+   ```sql
+   "Append  (cost=0.00..3101.01 rows=3 width=33) (actual time=5.791..17.124 rows=1 loops=1)"
+   "  ->  Seq Scan on t_books_part_1  (cost=0.00..1032.99 rows=1 width=32) (actual time=5.790..5.791 rows=1 loops=1)"
+   "        Filter: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+   "        Rows Removed by Filter: 49998"
+   "  ->  Seq Scan on t_books_part_2  (cost=0.00..1034.00 rows=1 width=33) (actual time=6.250..6.250 rows=0 loops=1)"
+   "        Filter: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+   "        Rows Removed by Filter: 50000"
+   "  ->  Seq Scan on t_books_part_3  (cost=0.00..1034.01 rows=1 width=34) (actual time=5.074..5.074 rows=0 loops=1)"
+   "        Filter: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+   "        Rows Removed by Filter: 50001"
+   "Planning Time: 0.168 ms"
+   "Execution Time: 17.164 ms"
+   ```
    
    *Объясните результат:*
-   [Ваше объяснение]
+   Скорость выполнения такая же, как и без партиций, так как таблица разбивается по book_id, а запрос выбирает по title, поэтому разделение не улучшает поиск
 
-6. Создайте партиционированный индекс:
+7. Создайте партиционированный индекс:
    ```sql
    CREATE INDEX ON t_books_part(title);
    ```
    
    *Результат:*
-   [Вставьте результат выполнения]
+   ```sql
+   CREATE INDEX
+   Query returned successfully in 537 msec.
+   ```
 
-7. Повторите запрос из шага 5:
+8. Повторите запрос из шага 5:
    ```sql
    EXPLAIN ANALYZE
    SELECT * FROM t_books_part 
@@ -81,20 +106,33 @@
    ```
    
    *План выполнения:*
-   [Вставьте план выполнения]
+   ```sql
+   "Append  (cost=0.29..24.94 rows=3 width=33) (actual time=0.036..0.087 rows=1 loops=1)"
+   "  ->  Index Scan using t_books_part_1_title_idx on t_books_part_1  (cost=0.29..8.31 rows=1 width=32) (actual time=0.035..0.036         rows=1 loops=1)"
+   "        Index Cond: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+   "  ->  Index Scan using t_books_part_2_title_idx on t_books_part_2  (cost=0.29..8.31 rows=1 width=33) (actual time=0.028..0.028         rows=0 loops=1)"
+   "        Index Cond: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+   "  ->  Index Scan using t_books_part_3_title_idx on t_books_part_3  (cost=0.29..8.31 rows=1 width=34) (actual time=0.020..0.020         rows=0 loops=1)"
+   "        Index Cond: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+   "Planning Time: 0.754 ms"
+   "Execution Time: 0.117 ms"
+   ```
    
    *Объясните результат:*
-   [Ваше объяснение]
+   Используется созданный индекс на title, который сильно ускорил скорость выполнения запроса
 
-8. Удалите созданный индекс:
+9. Удалите созданный индекс:
    ```sql
    DROP INDEX t_books_part_title_idx;
    ```
    
    *Результат:*
-   [Вставьте результат выполнения]
+   ```sql
+   DROP INDEX
+   Query returned successfully in 125 msec.
+   ```
 
-9. Создайте индекс для каждой партиции:
+10. Создайте индекс для каждой партиции:
    ```sql
    CREATE INDEX ON t_books_part_1(title);
    CREATE INDEX ON t_books_part_2(title);
@@ -102,9 +140,12 @@
    ```
    
    *Результат:*
-   [Вставьте результат выполнения]
+   ```sql
+   CREATE INDEX
+   Query returned successfully in 507 msec.
+   ```
 
-10. Повторите запрос из шага 5:
+11. Повторите запрос из шага 5:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books_part 
@@ -112,12 +153,22 @@
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "Append  (cost=0.29..24.94 rows=3 width=33) (actual time=0.057..0.086 rows=1 loops=1)"
+    "  ->  Index Scan using t_books_part_1_title_idx on t_books_part_1  (cost=0.29..8.31 rows=1 width=32) (actual time=0.056..0.058         rows=1 loops=1)"
+    "        Index Cond: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+    "  ->  Index Scan using t_books_part_2_title_idx on t_books_part_2  (cost=0.29..8.31 rows=1 width=33) (actual time=0.013..0.013         rows=0 loops=1)"
+    "        Index Cond: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+    "  ->  Index Scan using t_books_part_3_title_idx on t_books_part_3  (cost=0.29..8.31 rows=1 width=34) (actual time=0.012..0.012         rows=0 loops=1)"
+    "        Index Cond: ((title)::text = 'Expert PostgreSQL Architecture'::text)"
+    "Planning Time: 0.294 ms"
+    "Execution Time: 0.137 ms"
+    ```
     
     *Объясните результат:*
-    [Ваше объяснение]
+    Скорость выполнения не изменилась по сравнению с предыдущим случаем. Отдельный индекс для каждой партиции не увеличивает скорость выполнения запроса
 
-11. Удалите созданные индексы:
+12. Удалите созданные индексы:
     ```sql
     DROP INDEX t_books_part_1_title_idx;
     DROP INDEX t_books_part_2_title_idx;
@@ -125,37 +176,51 @@
     ```
     
     *Результат:*
-    [Вставьте результат выполнения]
+    ```sql
+    DROP INDEX
+    Query returned successfully in 114 msec.
+    ```
 
-12. Создайте обычный индекс по book_id:
+13. Создайте обычный индекс по book_id:
     ```sql
     CREATE INDEX t_books_part_idx ON t_books_part(book_id);
     ```
     
     *Результат:*
-    [Вставьте результат выполнения]
+    ```sql
+    CREATE INDEX
+    Query returned successfully in 222 msec.
+    ```
 
-13. Выполните поиск по book_id:
+14. Выполните поиск по book_id:
     ```sql
     EXPLAIN ANALYZE
     SELECT * FROM t_books_part WHERE book_id = 11011;
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "Index Scan using t_books_part_1_book_id_idx on t_books_part_1 t_books_part  (cost=0.29..8.31 rows=1 width=32) (actual                  time=0.030..0.031 rows=1 loops=1)"
+    "  Index Cond: (book_id = 11011)"
+    "Planning Time: 0.612 ms"
+    "Execution Time: 0.053 ms"
+    ```
     
     *Объясните результат:*
-    [Ваше объяснение]
+    Созданный  индекс увеличил скорость выполнения запроса
 
-14. Создайте индекс по полю is_active:
+15. Создайте индекс по полю is_active:
     ```sql
     CREATE INDEX t_books_active_idx ON t_books(is_active);
     ```
     
     *Результат:*
-    [Вставьте результат выполнения]
+    ```sql
+    CREATE INDEX
+    Query returned successfully in 239 msec.
+    ```
 
-15. Выполните поиск активных книг с отключенным последовательным сканированием:
+16. Выполните поиск активных книг с отключенным последовательным сканированием:
     ```sql
     SET enable_seqscan = off;
     EXPLAIN ANALYZE
@@ -164,12 +229,20 @@
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "Bitmap Heap Scan on t_books  (cost=852.52..2891.52 rows=75900 width=33) (actual time=2.691..18.158 rows=75405 loops=1)"
+    "  Recheck Cond: is_active"
+    "  Heap Blocks: exact=1225"
+    "  ->  Bitmap Index Scan on t_books_active_idx  (cost=0.00..833.54 rows=75900 width=0) (actual time=2.478..2.479 rows=75405             loops=1)"
+    "        Index Cond: (is_active = true)"
+    "Planning Time: 0.101 ms"
+    "Execution Time: 22.606 ms"
+    ```
     
     *Объясните результат:*
-    [Ваше объяснение]
+    Отключение последовательного сканирования заставило планировщика применить индекс, что на самом деле не увеличило скорость выполнения запроса
 
-16. Создайте составной индекс:
+17. Создайте составной индекс:
     ```sql
     CREATE INDEX t_books_author_title_index ON t_books(author, title);
     ```
@@ -177,7 +250,7 @@
     *Результат:*
     [Вставьте результат выполнения]
 
-17. Найдите максимальное название для каждого автора:
+18. Найдите максимальное название для каждого автора:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, MAX(title) 
@@ -191,7 +264,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-18. Выберите первых 10 авторов:
+19. Выберите первых 10 авторов:
     ```sql
     EXPLAIN ANALYZE
     SELECT DISTINCT author 
@@ -206,7 +279,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-19. Выполните поиск и сортировку:
+20. Выполните поиск и сортировку:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, title 
@@ -221,7 +294,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-20. Добавьте новую книгу:
+21. Добавьте новую книгу:
     ```sql
     INSERT INTO t_books (book_id, title, author, category, is_active)
     VALUES (150001, 'Cookbook', 'Mr. Hide', NULL, true);
@@ -231,7 +304,7 @@
     *Результат:*
     [Вставьте результат выполнения]
 
-21. Создайте индекс по категории:
+22. Создайте индекс по категории:
     ```sql
     CREATE INDEX t_books_cat_idx ON t_books(category);
     ```
@@ -239,7 +312,7 @@
     *Результат:*
     [Вставьте результат выполнения]
 
-22. Найдите книги без категории:
+23. Найдите книги без категории:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, title 
@@ -253,7 +326,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-23. Создайте частичные индексы:
+24. Создайте частичные индексы:
     ```sql
     DROP INDEX t_books_cat_idx;
     CREATE INDEX t_books_cat_null_idx ON t_books(category) WHERE category IS NULL;
@@ -262,7 +335,7 @@
     *Результат:*
     [Вставьте результат выполнения]
 
-24. Повторите запрос из шага 22:
+25. Повторите запрос из шага 22:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, title 
@@ -276,7 +349,7 @@
     *Объясните результат:*
     [Ваше объяснение]
 
-25. Создайте частичный уникальный индекс:
+26. Создайте частичный уникальный индекс:
     ```sql
     CREATE UNIQUE INDEX t_books_selective_unique_idx 
     ON t_books(title) 

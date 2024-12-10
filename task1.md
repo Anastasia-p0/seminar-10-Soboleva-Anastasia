@@ -318,6 +318,7 @@
     ```
     ```sql
     Второй вариант:
+    ERROR:  operator class "gin_trgm_ops" does not exist for access method "gin" 
     ```
     
     *Объясните результаты:*

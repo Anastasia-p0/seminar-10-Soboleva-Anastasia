@@ -248,9 +248,12 @@
     ```
     
     *Результат:*
-    [Вставьте результат выполнения]
+    ```sql
+    CREATE INDEX
+    Query returned successfully in 2 secs 744 msec.
+    ```
 
-18. Найдите максимальное название для каждого автора:
+19. Найдите максимальное название для каждого автора:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, MAX(title) 
@@ -259,12 +262,19 @@
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "HashAggregate  (cost=3530.00..3540.00 rows=1000 width=42) (actual time=102.055..102.229 rows=1003 loops=1)"
+    "  Group Key: author"
+    "  Batches: 1  Memory Usage: 193kB"
+    "  ->  Seq Scan on t_books  (cost=0.00..2780.00 rows=150000 width=21) (actual time=0.010..14.742 rows=150000 loops=1)"
+    "Planning Time: 0.699 ms"
+    "Execution Time: 102.348 ms"
+    ```
     
     *Объясните результат:*
     [Ваше объяснение]
 
-19. Выберите первых 10 авторов:
+20. Выберите первых 10 авторов:
     ```sql
     EXPLAIN ANALYZE
     SELECT DISTINCT author 
@@ -274,12 +284,20 @@
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "Limit  (cost=0.42..58.71 rows=10 width=10) (actual time=0.146..0.495 rows=10 loops=1)"
+    "  ->  Result  (cost=0.42..5829.42 rows=1000 width=10) (actual time=0.144..0.492 rows=10 loops=1)"
+    "        ->  Unique  (cost=0.42..5829.42 rows=1000 width=10) (actual time=0.143..0.489 rows=10 loops=1)"
+    "              ->  Index Only Scan using t_books_author_title_index on t_books  (cost=0.42..5454.42 rows=150000 width=10) (actual       time=0.141..0.367 rows=1341 loops=1)"
+    "                    Heap Fetches: 0"
+    "Planning Time: 0.180 ms"
+    "Execution Time: 0.521 ms"
+    
     
     *Объясните результат:*
     [Ваше объяснение]
 
-20. Выполните поиск и сортировку:
+21. Выполните поиск и сортировку:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, title 
@@ -289,12 +307,21 @@
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "Sort  (cost=3155.29..3155.33 rows=15 width=21) (actual time=21.089..21.091 rows=1 loops=1)"
+    "  Sort Key: author, title"
+    "  Sort Method: quicksort  Memory: 25kB"
+    "  ->  Seq Scan on t_books  (cost=0.00..3155.00 rows=15 width=21) (actual time=21.044..21.076 rows=1 loops=1)"
+    "        Filter: ((author)::text ~~ 'T%'::text)"
+    "        Rows Removed by Filter: 149999"
+    "Planning Time: 0.115 ms"
+    "Execution Time: 21.116 ms"
+    ```
     
     *Объясните результат:*
     [Ваше объяснение]
 
-21. Добавьте новую книгу:
+22. Добавьте новую книгу:
     ```sql
     INSERT INTO t_books (book_id, title, author, category, is_active)
     VALUES (150001, 'Cookbook', 'Mr. Hide', NULL, true);
@@ -302,17 +329,25 @@
     ```
     
     *Результат:*
-    [Вставьте результат выполнения]
+    ```sql
+    INSERT 0 1
+    Query returned successfully in 170 msec.
+    COMMIT
+    Query returned successfully in 188 msec.
+    ```
 
-22. Создайте индекс по категории:
+23. Создайте индекс по категории:
     ```sql
     CREATE INDEX t_books_cat_idx ON t_books(category);
     ```
     
     *Результат:*
-    [Вставьте результат выполнения]
+    ```sql
+    CREATE INDEX
+    Query returned successfully in 229 msec.
+    ```
 
-23. Найдите книги без категории:
+24. Найдите книги без категории:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, title 
@@ -321,21 +356,29 @@
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "Index Scan using t_books_cat_idx on t_books  (cost=0.29..8.14 rows=1 width=21) (actual time=0.029..0.031 rows=3 loops=1)"
+    "  Index Cond: (category IS NULL)"
+    "Planning Time: 0.278 ms"
+    "Execution Time: 0.046 ms"
+    ```
     
     *Объясните результат:*
     [Ваше объяснение]
 
-24. Создайте частичные индексы:
+25. Создайте частичные индексы:
     ```sql
     DROP INDEX t_books_cat_idx;
     CREATE INDEX t_books_cat_null_idx ON t_books(category) WHERE category IS NULL;
     ```
     
     *Результат:*
-    [Вставьте результат выполнения]
+    ```sql
+    CREATE INDEX
+    Query returned successfully in 169 msec.
+    ```
 
-25. Повторите запрос из шага 22:
+26. Повторите запрос из шага 22:
     ```sql
     EXPLAIN ANALYZE
     SELECT author, title 
@@ -344,12 +387,16 @@
     ```
     
     *План выполнения:*
-    [Вставьте план выполнения]
+    ```sql
+    "Index Scan using t_books_cat_null_idx on t_books  (cost=0.13..7.97 rows=1 width=21) (actual time=0.019..0.020 rows=3 loops=1)"
+    "Planning Time: 0.561 ms"
+    "Execution Time: 0.041 ms"
+    ```
     
     *Объясните результат:*
     [Ваше объяснение]
 
-26. Создайте частичный уникальный индекс:
+27. Создайте частичный уникальный индекс:
     ```sql
     CREATE UNIQUE INDEX t_books_selective_unique_idx 
     ON t_books(title) 
@@ -369,7 +416,40 @@
     ```
     
     *Результат:*
-    [Вставьте результаты всех операций]
+    ```sql
+    CREATE INDEX
+    Query returned successfully in 276 msec.
+    ```
+    ```sql
+    INSERT 0 1
+    Query returned successfully in 160 msec.
+    ```
+    ```sql
+    "Bitmap Heap Scan on t_books  (cost=625.16..2278.68 rows=29881 width=21) (actual time=2.145..13.384 rows=29893 loops=1)"
+    "  Recheck Cond: ((category)::text = 'Science'::text)"
+    "  Heap Blocks: exact=1225"
+    "  ->  Bitmap Index Scan on t_books_selective_unique_idx  (cost=0.00..617.69 rows=29881 width=0) (actual time=1.901..1.902             rows=29893 loops=1)"
+    "Planning Time: 0.181 ms"
+    "Execution Time: 22.105 ms"
+    ```
+    ```sql
+    ERROR:  Key (title)=(Unique Science Book) already exists.duplicate key value violates unique constraint                                 "t_books_selective_unique_idx"
+    ERROR:  duplicate key value violates unique constraint "t_books_selective_unique_idx"
+    SQL state: 23505
+    Detail: Key (title)=(Unique Science Book) already exists.
+    ```
+    ```sql
+    INSERT 0 1
+    Query returned successfully in 233 msec.
+    ```
+    ```sql
+    "Bitmap Heap Scan on t_books  (cost=625.16..2278.68 rows=29881 width=21) (actual time=1.780..14.032 rows=29893 loops=1)"
+    "  Recheck Cond: ((category)::text = 'Science'::text)"
+    "  Heap Blocks: exact=1225"
+    "  ->  Bitmap Index Scan on t_books_selective_unique_idx  (cost=0.00..617.69 rows=29881 width=0) (actual time=1.616..1.617             rows=29893 loops=1)"
+    "Planning Time: 0.121 ms"
+    "Execution Time: 15.633 ms"
+    ```
     
     *Объясните результат:*
     [Ваше объяснение]
